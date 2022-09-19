@@ -1,0 +1,13 @@
+Informatique;Fribourg;12.10.1998
+Comptabilité;Fribourg;01.01.1999
+Marketing;Fribourg;08.02.1999
+Informatique;Dehli;01.05.2003
+Comptabilité;Dehli;01.11.2003
+Support;Bulle;01.06.2000
+Informatique;Bulle;01.01.2003
+Vente en ligne;Avry;01.02.2008
+Dépannage;Morat;01.11.2003
+Recherche;Palo Alto;01.12.2004
+Développement;Corminboeuf;05.10.2007
+Production;Shanghai;08.08.2008
+Serveur Web;Genève;01.09.2009
