@@ -1,6 +1,9 @@
 package app.presentation;
 
 
+import app.beans.Departement;
+import app.beans.Localite;
+import app.beans.Personne;
 import app.exceptions.MyDBException;
 import app.helpers.DateTimeLib;
 import app.helpers.JfxPopup;
@@ -32,7 +35,7 @@ import javafx.stage.Stage;
  */
 public class MainCtrl implements Initializable {
 
-    final static private String PU = "PU_MYSQL";
+    final static private String PU = "Ex09_-_JPA_DAOPU";
 
     private DbWorker dbWrk;
     private PersonneManager persMan;
@@ -67,9 +70,9 @@ public class MainCtrl implements Initializable {
     @FXML
     private DatePicker dateNaissance;
     @FXML
-    private ComboBox<?> cbxLocalite;
+    private ComboBox<Localite> cbxLocalite;
     @FXML
-    private ComboBox<?> cbxDepartement;
+    private ComboBox<Departement> cbxDepartement;
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
@@ -206,8 +209,8 @@ public class MainCtrl implements Initializable {
         txtPK.setText(String.valueOf(p.getPkPers()));
         txtPrenom.setText(p.getPrenom());
         txtNom.setText(p.getNom());
-        dateNaissance.setValue(DateTimeLib.dateToLocalDate(p.getDatenaissance()));
-        txtNo.setText(String.valueOf(p.getNorue()));
+        dateNaissance.setValue(DateTimeLib.dateToLocalDate(p.getDateNaissance()));
+        txtNo.setText(String.valueOf(p.getNoRue()));
         txtRue.setText(p.getRue());
         cbxDepartement.setValue(p.getFkDep());
         cbxLocalite.setValue(p.getFkLoc());
@@ -229,9 +232,9 @@ public class MainCtrl implements Initializable {
         p.setActif(ckbActif.isSelected());
 
         try {
-            p.setNorue(Integer.parseInt(txtNo.getText()));
+            p.setNoRue(Integer.parseInt(txtNo.getText()));
         } catch (NumberFormatException e) {
-            p.setNorue(0);
+            p.setNoRue(0);
         }
         try {
             p.setSalaire(new BigDecimal(txtSalaire.getText()));
@@ -257,8 +260,8 @@ public class MainCtrl implements Initializable {
     @FXML
     private void menuChargerLocalites(ActionEvent event) {
         FileChooser chooser = new FileChooser();
-        chooser.setTitle("Sélectionnez le fichier des localits");
-        Path path = Paths.get("data").toAbsolutePath();
+        chooser.setTitle("Sélectionnez le fichier des localités");
+        Path path = Paths.get("../data").toAbsolutePath();
         chooser.setInitialDirectory(path.toFile());
         File file = chooser.showOpenDialog(new Stage());
         if (file != null) {
@@ -270,7 +273,7 @@ public class MainCtrl implements Initializable {
                 String mess = "Les " + nb + " localités ont été chargées en " + (t1 - t0) / 1000. + " s";
                 JfxPopup.displayInformation("INFORMATION", "Lecture et chargement des localités", mess);
             } catch (Exception ex) {
-                JfxPopup.displayError("ERREUR", null, ex.getMessage());
+                JfxPopup.displayError("ERREUR", "Chargement des localités", ex.getMessage());
             }
 
         }
@@ -280,7 +283,7 @@ public class MainCtrl implements Initializable {
     private void menuChargerDepartement(ActionEvent event) {
         FileChooser chooser = new FileChooser();
         chooser.setTitle("Sélectionnez le fichier des départements");
-        Path path = Paths.get("data").toAbsolutePath();
+        Path path = Paths.get("../data").toAbsolutePath();
         chooser.setInitialDirectory(path.toFile());
         File file = chooser.showOpenDialog(new Stage());
         if (file != null) {
@@ -293,13 +296,30 @@ public class MainCtrl implements Initializable {
                 String mess = "Les " + nb + " départements ont été chargées en " + (t1 - t0) / 1000. + " s";
                 JfxPopup.displayInformation("INFORMATION", "Lecture et chargement des départements", mess);
             } catch (Exception ex) {
-                JfxPopup.displayError("ERREUR", null, ex.getMessage());
+                JfxPopup.displayError("ERREUR", "Charchement des départements", ex.getMessage());
             }
         }
     }
 
     @FXML
     private void menuRechercher(ActionEvent event) {
+        
+        //Récupération du nom à rechercher dans la base de données
         String nomARechercher = JfxPopup.askInfo("Recherche", "Rechercher une personne avec le son nom", "Insérer le nom à rechercher");
+        
+        try{
+            
+            //Recherche de la personne avec le nom
+            Personne personne = dbWrk.rechercherPersonneAvecNom(nomARechercher);
+        
+            //Afficher la personne recherchée
+            this.afficherPersonne(personne);
+        
+        } catch (MyDBException ex){
+             
+            //Afficher une popup d'erreur
+            JfxPopup.displayError("Erreur", "Recherche de personnes", "Un problème est survenu lors de la recherche ou alors la personne n'est pas présente dans la base de données.");
+            
+        }
     }
 }
