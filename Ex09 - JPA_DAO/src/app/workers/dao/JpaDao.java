@@ -193,11 +193,23 @@ public class JpaDao<E, PK> implements JpaDaoItf<E, PK> {
     @SuppressWarnings("unchecked")
     public E rechercher(String prop, Object valeur) throws MyDBException {
         
-        //Préparation de la requête
-        Query query = em.createQuery("SELECT e FROM Personne e WHERE e." + prop + " = '" + valeur + "'");
+        try{
         
-        //Retour du seul résltat qu'il y aura ou null si rien n'est trouvé
-        return (E)query.getSingleResult();
+            //Préparation de la requête
+            Query query = em.createQuery("SELECT e FROM Personne e WHERE e."+ prop+ " = :valeur");
+
+            //Remplacement du paramètre valeur par la valeur reçue en paramètre
+            query.setParameter("valeur", valeur);
+            
+            //Retour du seul résltat qu'il y aura ou null si rien n'est trouvé
+            return (E)query.getSingleResult();
+        
+        } catch (Exception ex) {
+                        
+            //Lever l'exception
+            throw new MyDBException(SystemLib.getFullMethodName(), ex.getMessage());
+            
+        }
     }
 
     /**
