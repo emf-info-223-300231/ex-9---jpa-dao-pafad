@@ -1,4 +1,7 @@
 
+import app.beans.Departement;
+import app.beans.Localite;
+import app.beans.Personne;
 import app.exceptions.MyDBException;
 import app.helpers.DateTimeLib;
 import app.helpers.SystemLib;
@@ -28,7 +31,7 @@ import java.time.LocalDateTime;
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class B_JpaDaoTest {
 
-  private static final String JPA_PU = "PU_MYSQL";
+  private static final String JPA_PU = "Ex09_-_JPA_DAOPU";
   static final String NOM_DOSSIER_DATA = "data";
   static final String NOM_FICHIER_LOC = "npa_ch_20140818_utf8.txt";
   static final String NOM_FICHIER_DEP = "departements_utf8.txt";
@@ -68,7 +71,7 @@ public class B_JpaDaoTest {
     p.setNom("Federer");
     p.setPrenom("Rodger");
     p.setDatenaissance(DateTimeLib.createDate(8, 8, 1981));
-    p.setNorue(13);
+    p.setNoRue(13);
     p.setRue("Rue à Roger");
     p.setFkLoc(null);
     p.setActif(true);

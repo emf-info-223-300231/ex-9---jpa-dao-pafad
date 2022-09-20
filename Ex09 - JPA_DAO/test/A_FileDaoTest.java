@@ -50,8 +50,8 @@ public class A_FileDaoTest {
     FileDaoItf<Localite> ficLocWrk = new FileDao<>(locExtr);
 
     // on prepare l'accès vers le fichier
-    Path cheminDossier = Paths.get(NOM_DOSSIER_DATA).toAbsolutePath();
-    String nomFic = cheminDossier + File.separator + NOM_FICHIER_LOC;
+    Path cheminDossier = Paths.get("../data").toAbsolutePath();
+    String nomFic = cheminDossier + File.separator + "npa_ch_20140818.txt";
     File ficLoc = new File(nomFic);
 
     // lecture des localités
@@ -76,8 +76,8 @@ public class A_FileDaoTest {
     FileDaoItf<Departement> ficDepWrk = new FileDao<>(depExtr);
 
     // on prepare l'accès vers le fichier
-    Path cheminDossier = Paths.get(NOM_DOSSIER_DATA).toAbsolutePath();
-    String nomFic = cheminDossier + File.separator + NOM_FICHIER_DEP;
+    Path cheminDossier = Paths.get("../data").toAbsolutePath();
+    String nomFic = cheminDossier + File.separator + "departements.txt";
     File ficDep = new File(nomFic);
 
     // lecture des localités

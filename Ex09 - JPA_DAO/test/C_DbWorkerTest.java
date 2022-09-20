@@ -58,7 +58,7 @@ public class C_DbWorkerTest {
         p.setNom("Federer");
         p.setPrenom("Roger");
         p.setDatenaissance(DateTimeLib.createDate(8, 8, 1981));
-        p.setNorue(15);
+        p.setNoRue(15);
         p.setRue("Freiburgerstrasse");
         p.setActif(true);
         p.setSalaire(BigDecimal.valueOf(50000000d));
@@ -150,8 +150,8 @@ public class C_DbWorkerTest {
         System.out.println("*** " + SystemLib.getCurrentMethod() + " ...");
 
         // on prepare l'accès vers le fichier
-        Path cheminDossier = Paths.get(NOM_DOSSIER_DATA).toAbsolutePath();
-        String nomFic = cheminDossier + File.separator + NOM_FICHIER_LOC;
+        Path cheminDossier = Paths.get("../data").toAbsolutePath();
+        String nomFic = cheminDossier + File.separator + "npa_ch_20140818.txt";
         File ficLoc = new File(nomFic);
 
         // on charge depuis le fichier texte et on sauve dans la BD
@@ -162,7 +162,7 @@ public class C_DbWorkerTest {
         System.out.println("  n1=" + n1 + ", n2=" + n2);
         boolean ok = n1 > 0 && n2 > 0;
         afficherMessage(ok, n2 + " localités présents dans la BD",
-                "Erreur de lecture du fichier " + NOM_FICHIER_LOC + " !!!");
+                "Erreur de lecture du fichier " + "npa_ch_20140818.txt" + " !!!");
         assertTrue(ok);
     }
 
@@ -197,8 +197,8 @@ public class C_DbWorkerTest {
         System.out.println("*** " + SystemLib.getCurrentMethod() + " ...");
 
         // on prepare l'accès vers le fichier
-        Path cheminDossier = Paths.get(NOM_DOSSIER_DATA).toAbsolutePath();
-        String nomFic = cheminDossier + File.separator + NOM_FICHIER_DEP;
+        Path cheminDossier = Paths.get("../data").toAbsolutePath();
+        String nomFic = cheminDossier + File.separator + "departements.txt";
         File ficDep = new File(nomFic);
 
         // on charge depuis le fichier texte et on sauve dans la BD
@@ -208,7 +208,7 @@ public class C_DbWorkerTest {
         long n2 = dbWrk.compterLocalites();
         boolean ok = n1 > 0 && n2 > 0;
         afficherMessage(ok, n2 + " départements présents dans la BD",
-                "Erreur de lecture du fichier " + NOM_FICHIER_DEP + " !!!");
+                "Erreur de lecture du fichier " + "departement.txt" + " !!!");
         assertTrue(ok);
     }
 }

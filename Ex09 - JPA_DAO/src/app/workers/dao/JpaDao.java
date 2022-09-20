@@ -47,6 +47,28 @@ public class JpaDao<E, PK> implements JpaDaoItf<E, PK> {
      */
     @Override
     public void creer(E e) throws MyDBException {
+        
+        try {
+            //Début de la transaction
+            et.begin();
+
+            //Persistance de l'objet
+            em.persist(e);
+
+            //Accepter la transaction
+            et.commit();
+            
+        } catch (Exception ex){
+            
+            //Si la transaction est active
+            if (et.isActive()){
+                
+                //Refuser la transaction
+                et.rollback();
+                
+            }
+            
+        }
     }
 
     /**
@@ -134,14 +156,28 @@ public class JpaDao<E, PK> implements JpaDaoItf<E, PK> {
      */
     @Override
     public long compter() throws MyDBException {
+        //On initialise un nombre à 0 pour compter
         long nb = 0;
+        
         try {
+         
+            //Préparation de la requête
             String jpql = "SELECT count(e) FROM " + cl.getSimpleName() + " e";
+            
+            //Création de la query
             Query query = em.createQuery(jpql);
+            
+            //On prend le seul résultat, qui est le nombre d'enregistrements présents
             nb = (Long) query.getSingleResult();
+        
         } catch (Exception ex) {
+            
+            //Lever l'exception
             throw new MyDBException(SystemLib.getFullMethodName(), ex.getMessage());
+        
         }
+        
+        //Retour du nombre d'enregistrements
         return nb;
     }
 
@@ -156,7 +192,12 @@ public class JpaDao<E, PK> implements JpaDaoItf<E, PK> {
     @Override
     @SuppressWarnings("unchecked")
     public E rechercher(String prop, Object valeur) throws MyDBException {
-        return null;
+        
+        //Préparation de la requête
+        Query query = em.createQuery("SELECT e FROM Personne e WHERE e." + prop + " = '" + valeur + "'");
+        
+        //Retour du seul résltat qu'il y aura ou null si rien n'est trouvé
+        return (E)query.getSingleResult();
     }
 
     /**
@@ -168,14 +209,28 @@ public class JpaDao<E, PK> implements JpaDaoItf<E, PK> {
     @Override
     @SuppressWarnings("unchecked")
     public List<E> lireListe() throws MyDBException {
+        
+        //Déclaration d'une liste insanciée
         List<E> liste = new ArrayList<>();
+        
         try {
-            String jpql = "SELECT e FROM " + cl.getSimpleName() + " e";
+            //Une mini condition est nécéssaire pour ordrer par nom les personnes
+            String jpql = "SELECT e FROM " + cl.getSimpleName() + " e" + (cl.getSimpleName().equals("Personne") ? " ORDER BY e.nom" : "");
+            
+            //Création de la query
             Query query = em.createQuery(jpql);
+            
+            //Affectation de la liste des résultats à la liste crée auparavant
             liste = query.getResultList();
+            
         } catch (Exception ex) {
+            
+            //Lever l'exception
             throw new MyDBException(SystemLib.getFullMethodName(), ex.getMessage());
+            
         }
+        
+        //Retour de la liste
         return liste;
     }
 
@@ -188,7 +243,32 @@ public class JpaDao<E, PK> implements JpaDaoItf<E, PK> {
      */
     @Override
     public int effacerListe() throws MyDBException {
-        int nb;
+        //Déclaration d'un nombre pour avoir le nombre d'enregistrements supprimés
+        int nb = 0;
+        
+        try{
+            //Début de la transaction
+            et.begin();
+
+            //Enlever toute la liste
+            em.remove(lireListe());
+
+            //Accepter la transaction
+            et.commit();
+            
+        } catch (Exception ex) {
+            
+            //Si la transaction est active
+            if(et.isActive()){
+                
+                //Refus de la transaction
+                et.rollback();
+                
+            }
+            
+        }
+        
+        //Retour du résultat
         return nb;
     }
 
@@ -196,13 +276,43 @@ public class JpaDao<E, PK> implements JpaDaoItf<E, PK> {
      * Sauve une liste globale dans une seule transaction.
      *
      * @param list
-     * @return TRUE si l'opération a pu se dérouler correctement
+     * @return le nombre d'objets sauvegardés
      * @throws app.exceptions.MyDBException
      */
     @Override
     public int sauverListe(List<E> list) throws MyDBException {
+        //Déclaration du nombre qui va contenir le nombre d'enregistrements sauvegardés
         int nb = 0;
+        
+        try{
+            
+            //Début de la transaction
+            et.begin();
+        
+            //Pour chaque éléments dans la liste
+            for (E e : list){
+            
+                //Je persiste l'objet qui est à l'intérieur de la liste
+                em.persist(e);
+            
+            }
+        
+            //Accepter la transaction
+            et.commit();
+        
+        } catch (Exception ex){
+            
+            //On réinitalise le nombre en cas de problème
+            nb = 0;
+            
+            //Lever l'exception
+            throw new MyDBException(SystemLib.getFullMethodName(), ex.getMessage());
+        
+        }
+        
+        //retour du résultat
         return nb;
+             
     }
 
     /**
@@ -212,14 +322,21 @@ public class JpaDao<E, PK> implements JpaDaoItf<E, PK> {
      */
     @Override
     public void deconnecter() {
+        
+        //Clore les connecxions
         em.close();
         emf.close();
+        
+        //Destruction de l'objet
         em = null;
     }
 
     @Override
     public boolean estConnectee() {
+        
+        //Une condition pour savoir si la ou les bases sont ouvertes
         return (em != null) && em.isOpen();
+        
     }
 
 }
